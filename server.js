@@ -79,8 +79,8 @@ app.get(
 
     connection
       .insert(
-        `Insert into ADMIN(NAME, EMAIL, GENDER, CITY, STREET, HOUSE, DOB, SALARY, DESIGNATION)
-    values (:1,:2,:3,:4,:5,:6,to_date(:7,'dd-mm-yyyy'),:8,:9)`,
+        `Insert into ADMIN(NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, DESIGNATION)
+    values (:1,:2,:3,ADDR(:4,:5,:6),to_date(:7,'dd-mm-yyyy'),:8,:9)`,
         params
       )
       .then((result) => {
@@ -193,8 +193,8 @@ app.get(
 
     connection
       .insert(
-        `insert into STAFF (NAME, EMAIL, GENDER, CITY, STREET, HOUSE, DOB, SALARY, SPECIALIZATION)
-        values (:1, :2, :3, :4, :5, :6, to_date(:7, 'dd-mm-yyyy'), :8, :9)`,
+        `insert into STAFF (NAME, EMAIL, GENDER,ADDRESS, DOB, SALARY, SPECIALIZATION)
+        values (:1, :2, :3, ADDR(:4, :5, :6), to_date(:7, 'dd-mm-yyyy'), :8, :9)`,
         params
       )
       .then((result) => {
@@ -330,8 +330,8 @@ app.get(
 
     connection
       .insert(
-        `insert into CUSTOMER (NAME, EMAIL, GENDER, CITY, STREET, HOUSE, DOB)
-    values (:1,:2,:3,:4,:5,:6,to_date(:7,'dd-mm-yyyy'))`,
+        `insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB)
+    values (:1,:2,:3,ADDR(:4,:5,:6),to_date(:7,'dd-mm-yyyy'))`,
         params
       )
       .then((result) => {
@@ -444,8 +444,8 @@ app.get(
 
     connection
       .insert(
-        `INSERT INTO VETERINARIAN (NAME, EMAIL, GENDER, CITY, STREET, HOUSE, DOB, SALARY, QUALIFICATION)
-    VALUES (:1, :2, :3, :4, :5, :6, TO_DATE(:7, 'dd-mm-yyyy'), :8, :9)`,
+        `INSERT INTO VETERINARIAN (NAME, EMAIL, GENDER,ADDRESS, DOB, SALARY, QUALIFICATION)
+    VALUES (:1, :2, :3, ADDR(:4, :5, :6), TO_DATE(:7, 'dd-mm-yyyy'), :8, :9)`,
         params
       )
       .then((result) => {
@@ -562,7 +562,7 @@ app.get("/vet_animal", (req, res) => {
 //feedback
 app.get("/feedback", (req, res) => {
   connection
-    .get_data("SELECT * FROM FEEDBACK")
+    .get_data("SELECT * FROM FEEDBACK_VIEW")
     .then((result) => {
       res.send(result);
     })
@@ -911,7 +911,7 @@ app.get("/non_customer_donation", (req, res) => {
 
 app.get("/donation", (req, res) => {
   connection
-    .get_data("select * from DONATION")
+    .get_data("select * from DONATION order by donation_no")
     .then((result) => {
       res.send(result);
     })
@@ -926,7 +926,7 @@ app.get(
     const name = req.params.name;
     const amount = req.params.amount;
     const donation_date = req.params.donation_date;
-    const customer_Id = req.params.customer_Id;
+    const customer_Id = req.params.customer_id;
 
     const params = {
       1: name,
@@ -937,8 +937,8 @@ app.get(
 
     connection
       .insert(
-        `insert into DONATION (DONATION_NAME, D_AMOUNT, DONATION_DATE, CUSTOMER_ID)
-        values (:1, to_date(:2, 'dd-mm-yyyy'), :3, :4, :5)`,
+        `insert into DONATION (NAME, AMOUNT, DONATION_DATE, CUSTOMER_ID)
+        values (:1, :2, to_date(:3, 'dd-mm-yyyy'), :4)`,
         params
       )
       .then((result) => {
