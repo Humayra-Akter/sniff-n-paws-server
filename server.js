@@ -570,6 +570,26 @@ app.get("/feedback", (req, res) => {
       res.status(500).send(error);
     });
 });
+app.get("/positive_feedback", (req, res) => {
+  connection
+    .get_data("SELECT * FROM positive_feedback")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+});
+app.get("/negative_feedback", (req, res) => {
+  connection
+    .get_data("SELECT * FROM negative_feedback")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+});
 
 app.get("/feedback_admin_review", (req, res) => {
   connection
