@@ -3,6 +3,7 @@ import connection from "./connection.js";
 import cors from "cors";
 const app = express();
 const port = process.env.PORT || 3002;
+const router = express.Router();
 
 app.use(cors());
 app.use(express.json());
@@ -13,6 +14,24 @@ app.get("/admin", (req, res) => {
     .get_data("select * from ADMIN_VIEW")
     .then((result) => {
       //console.log(result);
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/admin_password/:email/:password", (req, res) => {
+  const email = req.params.email;
+  const password = req.params.password;
+
+  console.log(email, password);
+
+  connection
+    .get_data(
+      `select * from admin where EMAIL='${email}' and PASSWORD='${password}'`
+    )
+    .then((result) => {
       res.send(result);
     })
     .catch((error) => {
@@ -127,6 +146,35 @@ app.get("/admin_phone_insert/:phone", (req, res) => {
 app.get("/staff", (req, res) => {
   connection
     .get_data("select * from STAFF_VIEW")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/staff_password/:email/:password", (req, res) => {
+  const email = req.params.email;
+  const password = req.params.password;
+
+  console.log(email, password);
+
+  connection
+    .get_data(
+      `select * from staff where EMAIL='${email}' and PASSWORD='${password}'`
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/staff_specialization", (req, res) => {
+  connection
+    .get_data("select * from STAFF_SPECIALIZATION")
     .then((result) => {
       res.send(result);
     })
@@ -288,6 +336,24 @@ app.get("/customer_delete/:id", (req, res) => {
     });
 });
 
+app.get("/customer_password/:email/:password", (req, res) => {
+  const email = req.params.email;
+  const password = req.params.password;
+
+  console.log(email, password);
+
+  connection
+    .get_data(
+      `select * from CUSTOMER where EMAIL='${email}' and PASSWORD='${password}'`
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
 app.get("/customer_update/:set/:sv/:fdn/:val", (req, res) => {
   const set = req.params.set;
   const sv = req.params.sv;
@@ -359,6 +425,24 @@ app.get(
 app.get("/veterinarian", (req, res) => {
   connection
     .get_data("SELECT * FROM vet_v")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/vet_password/:email/:password", (req, res) => {
+  const email = req.params.email;
+  const password = req.params.password;
+
+  console.log(email, password);
+
+  connection
+    .get_data(
+      `select * from veterinarian where EMAIL='${email}' and PASSWORD='${password}'`
+    )
     .then((result) => {
       res.send(result);
     })
@@ -559,6 +643,7 @@ app.get("/vet_animal", (req, res) => {
       res.send(error);
     });
 });
+
 //feedback
 app.get("/feedback", (req, res) => {
   connection
@@ -602,17 +687,6 @@ app.get("/feedback_admin_review", (req, res) => {
     });
 });
 
-app.get("/feedback_manager_review", (req, res) => {
-  connection
-    .get_data("SELECT * FROM manager_review")
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.status(500).send(error);
-    });
-});
-
 app.get("/feedback_service_review", (req, res) => {
   connection
     .get_data("SELECT * FROM service_review")
@@ -638,6 +712,16 @@ app.get("/feedback_veterinarian_review", (req, res) => {
 app.get("/feedback_staff_review", (req, res) => {
   connection
     .get_data("SELECT * FROM staff_review")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+});
+app.get("/avg_rate", (req, res) => {
+  connection
+    .get_data("SELECT * FROM average_rating")
     .then((result) => {
       res.send(result);
     })
@@ -689,6 +773,7 @@ app.get("/day_care_animal", (req, res) => {
       res.send(error);
     });
 });
+
 app.get(
   "/daycare_animal_insert/:age/:breed/:weight/:rate/:type/:coming_date/:release_date/:cabin_no/:health_record_id/:customer_id",
   (req, res) => {
@@ -804,10 +889,9 @@ app.get(
 
     connection
       .insert(
-        `
-    INSERT INTO DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE_DATE, CABIN_NO, HEALTH_RECORD_ID, CUSTOMER_ID)
-    VALUES (:age, :breed, :weight, :rate, :type, TO_DATE(:coming_date, 'dd-mm-yyyy'), TO_DATE(:release_date, 'dd-mm-yyyy'), :cabin_no, :health_record_id, :customer_id)
-  `,
+        `INSERT INTO DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE_DATE, CABIN_NO, HEALTH_RECORD_ID, CUSTOMER_ID)
+    VALUES (:age, :breed, :weight, :rate, :type, TO_DATE(:coming_date, 'dd-mm-yyyy'), TO_DATE(:release_date, 'dd-mm-yyyy'),
+    :cabin_no, :health_record_id, :customer_id)`,
         params
       )
       .then((result) => {
@@ -851,6 +935,44 @@ app.get("/unvaccinated_rescued_animal", (req, res) => {
     });
 });
 
+//health record
+app.get("/health_record", (req, res) => {
+  connection
+    .get_data("select * from health_record_view")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//update health record
+app.get("/health_record_update/:set/:sv/:fdn/:val", (req, res) => {
+  const set = req.params.set;
+  const sv = req.params.sv;
+  const fdn = req.params.fdn;
+  const val = req.params.val;
+
+  connection
+    .get_data(
+      "update health_record set " +
+        set +
+        "='" +
+        sv +
+        "' where " +
+        fdn +
+        "=" +
+        val
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
 //rescuer
 app.get("/rescuer", (req, res) => {
   connection
@@ -860,6 +982,27 @@ app.get("/rescuer", (req, res) => {
     })
     .catch((error) => {
       res.status(500).send(error);
+    });
+});
+app.get("/rescuerInfo", (req, res) => {
+  connection
+    .get_data("SELECT * FROM RESCUE_INFO")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
+});
+
+app.get("/customer_rescuer", (req, res) => {
+  connection
+    .get_data("SELECT * FROM cust_rescuer")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
     });
 });
 
@@ -969,5 +1112,143 @@ app.get(
       });
   }
 );
+
+//log in functions
+app.get("/login/:username", (req, res) => {
+  const username = req.params.username;
+
+  connection
+    .get_data("select status from login where username='" + username + "'")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/login/:email", (req, res) => {
+  const username = req.params.username;
+
+  connection
+    .get_data("select status from login where username='" + username + "'")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/login_insert/:email/:type/:status", (req, res) => {
+  const username = req.params.email;
+  const type = req.params.type;
+  const status = req.params.status;
+
+  const params = {
+    1: username,
+    2: type,
+    3: status,
+  };
+
+  connection
+    .insert(
+      `insert into login (email, user_type, status)
+      values (:1, :2, :3)`,
+      params
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//daycare_animal_record_view
+app.get("/daycare_animal_record_view", (req, res) => {
+  connection
+    .get_data("select * from daycare_animal_record_view")
+    .then((result) => {
+      //console.log(result);
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//rescued_animal_record_view
+app.get("/rescued_animal_record_view", (req, res) => {
+  connection
+    .get_data("select * from rescued_animal_record_view")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/customer_selfinfo/:email", (req, res) => {
+  connection
+    .get_data("select * from customer_view where EMAIL=" + req.params.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+app.get("/customer_cabin/:email", (req, res) => {
+  connection
+    .get_data(
+      "select  * from  CUSTOMER_ANIMAL_CABIN where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
+        req.params.email +
+        ")"
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/customer_donation/:email", (req, res) => {
+  connection
+    .get_data("select * from CUSTOMER_DONATION where EMAIL=" + req.params.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+///customer dashboard
+app.get("/c_feedback/:email", (req, res) => {
+  connection
+    .get_data("select * from FEEDBACK_VIEW where EMAIL=" + req.params.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+app.get("/customer_price/:email", (req, res) => {
+  connection
+    .get_data(
+      "select  * from  CUSTOMER_PRICING where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
+        req.params.email +
+        ")"
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
 
 app.listen(port);
