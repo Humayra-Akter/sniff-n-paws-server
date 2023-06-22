@@ -973,6 +973,63 @@ app.get("/health_record_update/:set/:sv/:fdn/:val", (req, res) => {
     });
 });
 
+app.get("/disease_insert/:record_id/:disease_name", (req, res) => {
+  const record_id = req.params.record_id;
+  const disease_name = req.params.disease_name;
+
+  const params = {
+    1: record_id,
+    2: disease_name,
+  };
+
+  connection
+    .insert(
+      `insert into DISEASES (HEALTH_RECORD_ID, DISEASE_NAME)
+    VALUES (:1, :2)`,
+      params
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get(
+  "/health_record_insert/:rabies/:rab_date/:flu/:flu_date/:spay_neuter/:animal_identifier",
+  (req, res) => {
+    const rabies = req.params.rabies;
+    const rab_date = req.params.rab_date;
+    const flu = req.params.flu;
+    const flu_date = req.params.flu_date;
+    const spay_neuter = req.params.spay_neuter;
+    const animal_identifier = req.params.animal_identifier;
+
+    const params = {
+      1: rabies,
+      2: rab_date,
+      3: flu,
+      4: flu_date,
+      5: spay_neuter,
+      6: animal_identifier,
+    };
+
+    connection
+      .insert(
+        `INSERT INTO HEALTH_RECORD (RABIES, RABIES_DATE, FLU, FLU_DATE, SPAY_NEUTER, ANIMAL_IDENTIFIER)
+    VALUES (:1, TO_DATE(:2, 'dd-mm-yyyy'), :3, TO_DATE(:4, 'dd-mm-yyyy'), :5, :6)`,
+        params
+      )
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        res.send(error);
+      });
+  }
+);
+
 //rescuer
 app.get("/rescuer", (req, res) => {
   connection
@@ -1165,6 +1222,20 @@ app.get("/login_insert/:email/:type/:status", (req, res) => {
     });
 });
 
+//logout
+app.get("/logout", (req, res) => {
+  connection
+    .get_data(
+      "update login set status=0 where  serial=(select max(serial) from login)"
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
 //daycare_animal_record_view
 app.get("/daycare_animal_record_view", (req, res) => {
   connection
@@ -1242,6 +1313,84 @@ app.get("/customer_price/:email", (req, res) => {
       "select  * from  CUSTOMER_PRICING where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
         req.params.email +
         ")"
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//customer dashboard
+app.get("/customer_selfinfo/:email", (req, res) => {
+  connection
+    .get_data("select * from customer_view where EMAIL=" + req.params.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+app.get("/customer_cabin/:email", (req, res) => {
+  connection
+    .get_data(
+      "select  * from  CUSTOMER_ANIMAL_CABIN where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
+        req.params.email +
+        ")"
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/customer_donation/:email", (req, res) => {
+  connection
+    .get_data("select * from CUSTOMER_DONATION where EMAIL=" + req.params.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/c_feedback/:email", (req, res) => {
+  connection
+    .get_data("select * from FEEDBACK_VIEW where EMAIL=" + req.params.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+app.get("/customer_price/:email", (req, res) => {
+  connection
+    .get_data(
+      "select  * from  CUSTOMER_PRICING where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
+        req.params.email +
+        ")"
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//staff dashboard
+
+app.get("staff_find_cabin/:ID", (req, res) => {
+  connection
+    .get_data(
+      "select unique ('Customer Name'), 'Duration', 'Daycare Animal ID', CUSTOMER_ANIMAL_CABIN.cabin_no from CUSTOMER_ANIMAL_CABIN,DAYCARE_ANIMALwhere upper(type)=(select upper(SPECIALIZATION) from STAFF where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))) and CUSTOMER_ANIMAL_CABIN.customer_id=" +
+        req.params.ID
     )
     .then((result) => {
       res.send(result);
