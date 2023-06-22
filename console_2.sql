@@ -26,6 +26,7 @@ select * from RESCUES;
 select * from daycare_animal_record_view;
 select * from rescued_animal_record_view;
 select * from LOGIN;
+select * from PENDING_ANIMAL;
 
 update login set status=0 where  serial=(select max(serial) from login);
 
@@ -114,7 +115,7 @@ select * from VET_VIEW;
 select * from DOCTOR_SHIFT;
 select * from STAFF_VIEW;
 select * from SHIFT_VIEW;
-select * from CABIN_INFO; ---baki
+select * from CABIN_INFO; 
 select * from DAYCARE_ANIMAL_HISTORY;   ---baki
 select * from RESCUED_ANIMAL_HISTORY;    ---baki
 select * from CUSTOMER_ANIMAL_CABIN;
@@ -140,6 +141,7 @@ select * from TOTAL_DAYCARE_SERVICES;
 select * from CUSTOMER_PRICING;
 select * from VET_ANIMAL;
 select * from cust_rescuer;
+select * from staff_specialization_customer_animal_cabin;
 
 
 

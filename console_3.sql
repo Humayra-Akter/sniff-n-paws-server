@@ -222,6 +222,7 @@ LEFT JOIN daycare_animals d ON r.vet_id = d.vet_id;
 
 
 --customer as well as Rescuer
+create or replace view CUST_RESCUER as
 SELECT c.customer_id, cph.phone_no, r.rescuer_id
 FROM customer c,customer_phone  cph
 , rescuer_phone  rph,
@@ -296,3 +297,66 @@ group by RESCUED_ANIMAL_ID, AGE, BREED, WEIGHT, TYPE, RABIES, RABIES_DATE, flu, 
 order by RESCUED_ANIMAL_ID;
 
 select * from RESCUED_ANIMAL_RECORD_VIEW;
+--staff specialization customer animal
+SELECT * FROM STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
+
+CREATE OR REPLACE VIEW STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN AS
+    SELECT
+        CAC.CUSTOMER_ID,
+        CAC."Customer Name",
+        CAC."Duration",
+        CAC."Daycare Animal ID",
+        CAC.CABIN_NO,
+        C.EXISTING_QUANTITY,
+        C.CAPACITY,
+        C.TYPE
+    FROM
+        CUSTOMER_ANIMAL_CABIN CAC
+        JOIN CABIN C
+        ON CAC.CABIN_NO=C.CABIN_NO
+    WHERE
+        UPPER(C.ANIMAL_TYPE)=(
+            SELECT
+                UPPER(SPECIALIZATION)
+            FROM
+                STAFF
+            WHERE
+                EMAIL=(select email from login where serial=(select max(serial) from login))
+        );
+---all_gen_admin_view
+create or replace view all_gen_admin_view as
+    select  name, email, gender, 
+          designation ,listagg(PHONE_NO, ', ') as Phone
+    from ADMIN JOIN ADMIN_PHONE on ADMIN.ADMIN_ID=ADMIN_PHONE.ADMIN_ID
+    group by ADMIN.ADMIN_ID, name, email, gender, ADMIN.address.house || ', ' || ADMIN.address.street || ', ' || ADMIN.address.city, to_char(dob, 'dd-mm-yyyy'), floor(months_between(sysdate, dob)/12), designation
+order by ADMIN.admin_id;
+
+---all_gen_staff_view
+create or replace view all_gen_staff_view as
+    select  name, email, gender, 
+           listagg(PHONE_NO, ', ') as Phone
+    from staff JOIN staff_PHONE on STAFF.STAFF_ID=STAFF_PHONE.STAFF_ID
+    group by staff.staff_ID, name, email, gender, staff.address.house || ', ' || staff.address.street || ', ' || staff.address.city, to_char(dob, 'dd-mm-yyyy'), floor(months_between(sysdate, dob)/12), salary
+order by staff.staff_id;
+
+
+---all_gen_vet_v
+create or replace view all_gen_vet_v as
+    select  name, email, gender, qualification, listagg(PHONE_NO, ', ') as Phone
+    from VETERINARIAN V JOIN vet_PHONE on V.vet_ID=vet_PHONE.vet_ID
+    group by V.vet_ID, name, email, gender, V.address.house || ', ' || V.address.street || ', ' || V.address.city, to_char(dob, 'dd-mm-yyyy'), floor(months_between(sysdate, dob)/12), salary, qualification
+order by V.vet_id;
+
+---customer pricing
+CREATE OR REPLACE VIEW CUSTOMER_PRICING AS
+    SELECT
+        C.CUSTOMER_ID,
+        C.NAME,
+        C.EMAIL,
+        SUM((DA.RELEASE_DATE - DA.COMING_DATE) * DA.RATE) AS TOTAL_PRICE
+    FROM
+        CUSTOMER       C
+        JOIN DAYCARE_ANIMAL DA
+        ON C.CUSTOMER_ID = DA.CUSTOMER_ID
+    GROUP BY
+        C.CUSTOMER_ID,C.NAME,C.EMAIL;

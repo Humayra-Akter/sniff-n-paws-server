@@ -510,10 +510,6 @@ create table RESCUES(
     constraint fk_rescued_animal_id foreign key (rescued_animal_id) references RESCUED_ANIMAL(rescued_animal_id) on delete cascade
 );
 
-
-
-
-
 create or replace trigger update_animal_trigger
     after insert on HEALTH_RECORD
     for each row
@@ -553,6 +549,7 @@ begin
                     set EXISTING_QUANTITY=existing_quantity+1
                 where CABIN_NO=i.cabin_no;
                 found:=true;
+
                 exit;
             end if;
         end loop;
@@ -584,15 +581,14 @@ begin
 
     if not found then
         raise not_enough_space_in_cabin;
+    else
+         delete from PENDING_ANIMAL where animal_identifier=:new.animal_identifier;
     end if;
 
     exception
         when not_enough_space_in_cabin then
             raise_application_error(-20001, 'Not enough space in cabin.');
 end;
-
-
-
 
 create or replace trigger update_disease_trigger
     after insert on DISEASES
@@ -763,5 +759,39 @@ EXCEPTION
     WHEN user_already_logged_in THEN
         raise_application_error(-20003, 'User already logged in');
 END;
+
+create table PENDING_ANIMAL(
+    animal_identifier varchar2(10),
+    request_date date,
+
+    constraint pk_pending primary key (animal_identifier)
+);
+
+
+create or replace trigger insert_daycare_to_pending
+    after insert on DAYCARE_ANIMAL
+    for each row
+declare
+    temp_animal_id number;
+    temp_animal_identifier varchar2(10);
+begin
+    temp_animal_id:=:new.daycare_animal_id;
+    temp_animal_identifier:='d_'||temp_animal_id;
+
+    insert into PENDING_ANIMAL (animal_identifier, request_date) values (temp_animal_identifier, to_date(to_char(sysdate, 'dd-mm-yyyy'), 'dd-mm-yyyy'));
+end;
+
+create or replace trigger insert_rescued_to_pending
+    after insert on RESCUED_ANIMAL
+    for each row
+declare
+    temp_animal_id number;
+    temp_animal_identifier varchar2(10);
+begin
+    temp_animal_id:=:new.rescued_animal_id;
+    temp_animal_identifier:='r_'||temp_animal_id;
+
+    insert into PENDING_ANIMAL (animal_identifier, request_date) values (temp_animal_identifier, to_date(to_char(sysdate, 'dd-mm-yyyy'), 'dd-mm-yyyy'));
+end;
 
 -- commit ;

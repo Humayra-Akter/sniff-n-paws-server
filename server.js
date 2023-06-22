@@ -373,7 +373,7 @@ app.get("/customer_update/:set/:sv/:fdn/:val", (req, res) => {
 });
 
 app.get(
-  "/customer_insert/:name/:email/:gender/:city/:street/:house/:dob/:phone",
+  "/customer_insert/:name/:email/:gender/:city/:street/:house/:dob/:phone/:password",
   (req, res) => {
     const name = req.params.name;
     const email = req.params.email;
@@ -383,6 +383,7 @@ app.get(
     const house = req.params.house;
     const dob = req.params.dob;
     const phone = req.params.phone;
+    const password = req.params.password;
 
     const params = {
       1: name,
@@ -392,12 +393,13 @@ app.get(
       5: street,
       6: house,
       7: dob,
+      8: password,
     };
 
     connection
       .insert(
-        `insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB)
-    values (:1,:2,:3,ADDR(:4,:5,:6),to_date(:7,'dd-mm-yyyy'))`,
+        `insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
+    values (:1,:2,:3,ADDR(:4,:5,:6),to_date(:7,'dd-mm-yyyy'), :8)`,
         params
       )
       .then((result) => {
@@ -775,7 +777,7 @@ app.get("/day_care_animal", (req, res) => {
 });
 
 app.get(
-  "/daycare_animal_insert/:age/:breed/:weight/:rate/:type/:coming_date/:release_date/:cabin_no/:health_record_id/:customer_id",
+  "/daycare_animal_insert/:age/:breed/:weight/:rate/:type/:coming_date/:release_date/:customer_id",
   (req, res) => {
     const age = req.params.age;
     const breed = req.params.breed;
@@ -784,8 +786,6 @@ app.get(
     const type = req.params.type;
     const coming_date = req.params.coming_date;
     const release_date = req.params.release_date;
-    const cabin_no = req.params.cabin_no;
-    const health_record_id = req.params.health_record_id;
     const customer_id = req.params.customer_id;
 
     const params = {
@@ -796,16 +796,14 @@ app.get(
       type: type,
       coming_date: coming_date,
       release_date: release_date,
-      cabin_no: cabin_no,
-      health_record_id: health_record_id,
       customer_id: customer_id,
     };
 
     connection
       .insert(
         `
-    INSERT INTO DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE_DATE, CABIN_NO, HEALTH_RECORD_ID, CUSTOMER_ID)
-    VALUES (:age, :breed, :weight, :rate, :type, TO_DATE(:coming_date, 'dd-mm-yyyy'), TO_DATE(:release_date, 'dd-mm-yyyy'), :cabin_no, :health_record_id, :customer_id)
+    INSERT INTO DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE_DATE,CUSTOMER_ID)
+    VALUES (:age, :breed, :weight, :rate, :type, TO_DATE(:coming_date, 'dd-mm-yyyy'), TO_DATE(:release_date, 'dd-mm-yyyy'),:customer_id)
   `,
         params
       )
@@ -817,6 +815,7 @@ app.get(
       });
   }
 );
+
 app.get("/healthy_day_care_animal", (req, res) => {
   connection
     .get_data("select * from HEALTHY_DAYCARE_ANIMAL")
@@ -861,18 +860,16 @@ app.get("/rescued_animal", (req, res) => {
 });
 
 app.get(
-  "/rescued_animal_insert/:age/:breed/:weight/:rate/:type/:coming_date/:release_date/:cabin_no/:health_record_id/:customer_id",
+  "/rescued_animal_insert/:age/:breed/:weight/:rate/:type/:res_from/:is_adopt/:adopt_date",
   (req, res) => {
     const age = req.params.age;
     const breed = req.params.breed;
     const weight = req.params.weight;
     const rate = req.params.rate;
     const type = req.params.type;
-    const coming_date = req.params.coming_date;
-    const release_date = req.params.release_date;
-    const cabin_no = req.params.cabin_no;
-    const health_record_id = req.params.health_record_id;
-    const customer_id = req.params.customer_id;
+    const res_from = req.params.res_from;
+    const is_adopt = req.params.is_adopt;
+    const adopt_date = req.params.adopt_date;
 
     const params = {
       age: age,
@@ -880,18 +877,15 @@ app.get(
       weight: weight,
       rate: rate,
       type: type,
-      coming_date: coming_date,
-      release_date: release_date,
-      cabin_no: cabin_no,
-      health_record_id: health_record_id,
-      customer_id: customer_id,
+      res_from: res_from,
+      is_adopt: is_adopt,
+      adopt_date: adopt_date,
     };
 
     connection
       .insert(
-        `INSERT INTO DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE_DATE, CABIN_NO, HEALTH_RECORD_ID, CUSTOMER_ID)
-    VALUES (:age, :breed, :weight, :rate, :type, TO_DATE(:coming_date, 'dd-mm-yyyy'), TO_DATE(:release_date, 'dd-mm-yyyy'),
-    :cabin_no, :health_record_id, :customer_id)`,
+        `insert into RESCUED_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, RESCUED_FROM, IS_ADOPTED, ADOPTION_DATE)
+    VALUES (:age, :breed, :weight, :rate, :type, :res_from, :is_adopt,TO_DATE(:adopt_date, 'dd-mm-yyyy'))`,
         params
       )
       .then((result) => {
@@ -1171,13 +1165,15 @@ app.get(
 );
 
 //log in functions
-app.get("/login/:username", (req, res) => {
-  const username = req.params.username;
-
+app.get("/login_status", (req, res) => {
   connection
-    .get_data("select status from login where username='" + username + "'")
+    .get_data(
+      "select STATUS from LOGIN where serial=(select max(serial) from login)"
+    )
     .then((result) => {
-      res.send(result);
+      const status = result[0].STATUS;
+      const isStatusTrue = status === "true";
+      res.send({ isStatusTrue });
     })
     .catch((error) => {
       res.send(error);
@@ -1389,10 +1385,146 @@ app.get("/customer_price/:email", (req, res) => {
 app.get("staff_find_cabin/:ID", (req, res) => {
   connection
     .get_data(
-      "select unique ('Customer Name'), 'Duration', 'Daycare Animal ID', CUSTOMER_ANIMAL_CABIN.cabin_no from CUSTOMER_ANIMAL_CABIN,DAYCARE_ANIMALwhere upper(type)=(select upper(SPECIALIZATION) from STAFF where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))) and CUSTOMER_ANIMAL_CABIN.customer_id=" +
-        req.params.ID
+      `select * from staff_specialization_customer_animal_cabin where customer_id=(select email from login where serial= (select max(serial) from LOGIN))`
     )
     .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/staff_selfInfo", (req, res) => {
+  connection
+    .get_data(
+      `select * from staff_view where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))`
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/staff_daycare_animal", (req, res) => {
+  connection
+    .get_data(
+      `select * from DAYCARE_ANIMAL
+         where upper(type)=(select upper(SPECIALIZATION) from STAFF
+		 where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))`
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get("/staff_rescued_animal", (req, res) => {
+  connection
+    .get_data(
+      `select * from RESCUED_ANIMAL
+         where upper(type)=(select upper(SPECIALIZATION) from STAFF
+		 where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))`
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//all_gen_admin_view
+app.get("all_gen_admin_view", (req, res) => {
+  connection
+    .get_data("select * from all_gen_admin_view")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+//all_gen_staff_view
+app.get("all_gen_staff_view", (req, res) => {
+  connection
+    .get_data("select * from all_gen_staff_view")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//all_gen_vet_v
+app.get("all_gen_vet_v", (req, res) => {
+  connection
+    .get_data("select * from all_gen_vet_v")
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//cabin info
+
+app.get("/cabin_info", (req, res) => {
+  connection
+    .get_data("select * from cabin_info")
+    .then((result) => {
+      //console.log(result);
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.get(
+  "/cabin_insert/:cabin_size/:existing_quantity/:type/:animal_type",
+  (req, res) => {
+    const cabinSize = req.params.cabin_size;
+    const existingQuantity = req.params.existing_quantity;
+    const type = req.params.type;
+    const animalType = req.params.animal_type;
+
+    const params = {
+      1: cabinSize,
+      2: existingQuantity,
+      3: type,
+      4: animalType,
+    };
+
+    connection
+      .insert(
+        `INSERT INTO CABIN (cabin_size, existing_quantity, type, animal_type)
+        VALUES (:1, :2, :3, :4)`,
+        params
+      )
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        res.send(error.message);
+      });
+  }
+);
+
+///pending table
+app.get("/pending_animal", (req, res) => {
+  connection
+    .get_data(
+      "select ANIMAL_IDENTIFIER, to_char(REQUEST_DATE, 'dd-mm-yyyy') from PENDING_ANIMAL"
+    )
+    .then((result) => {
+      //console.log(result);
       res.send(result);
     })
     .catch((error) => {
