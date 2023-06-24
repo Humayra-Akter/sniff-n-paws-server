@@ -1257,71 +1257,12 @@ app.get("/rescued_animal_record_view", (req, res) => {
     });
 });
 
-app.get("/customer_selfinfo/:email", (req, res) => {
-  connection
-    .get_data("select * from customer_view where EMAIL=" + req.params.email)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-app.get("/customer_cabin/:email", (req, res) => {
-  connection
-    .get_data(
-      "select  * from  CUSTOMER_ANIMAL_CABIN where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
-        req.params.email +
-        ")"
-    )
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-
-app.get("/customer_donation/:email", (req, res) => {
-  connection
-    .get_data("select * from CUSTOMER_DONATION where EMAIL=" + req.params.email)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-///customer dashboard
-app.get("/c_feedback/:email", (req, res) => {
-  connection
-    .get_data("select * from FEEDBACK_VIEW where EMAIL=" + req.params.email)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-app.get("/customer_price/:email", (req, res) => {
-  connection
-    .get_data(
-      "select  * from  CUSTOMER_PRICING where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
-        req.params.email +
-        ")"
-    )
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-
 //customer dashboard
-app.get("/customer_selfinfo/:email", (req, res) => {
+app.get("/customer_selfInfo", (req, res) => {
   connection
-    .get_data("select * from customer_view where EMAIL=" + req.params.email)
+    .get_data(
+      "select * from customer_view where EMAIL = (select EMAIL from LOGIN where STATUS=1)"
+    )
     .then((result) => {
       res.send(result);
     })
@@ -1329,12 +1270,10 @@ app.get("/customer_selfinfo/:email", (req, res) => {
       res.send(error);
     });
 });
-app.get("/customer_cabin/:email", (req, res) => {
+app.get("/customer_selfCabin", (req, res) => {
   connection
     .get_data(
-      "select  * from  CUSTOMER_ANIMAL_CABIN where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
-        req.params.email +
-        ")"
+      `select "Duration","Daycare Animal ID",CABIN_NO from  CUSTOMER_ANIMAL_CABIN where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=(select EMAIL from LOGIN where SERIAL= (select max(SERIAL) from LOGIN )))`
     )
     .then((result) => {
       res.send(result);
@@ -1344,33 +1283,10 @@ app.get("/customer_cabin/:email", (req, res) => {
     });
 });
 
-app.get("/customer_donation/:email", (req, res) => {
-  connection
-    .get_data("select * from CUSTOMER_DONATION where EMAIL=" + req.params.email)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-
-app.get("/c_feedback/:email", (req, res) => {
-  connection
-    .get_data("select * from FEEDBACK_VIEW where EMAIL=" + req.params.email)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.send(error);
-    });
-});
-app.get("/customer_price/:email", (req, res) => {
+app.get("/customer_selfDonation", (req, res) => {
   connection
     .get_data(
-      "select  * from  CUSTOMER_PRICING where CUSTOMER_ID =(select CUSTOMER_ID from CUSTOMER where EMAIL=" +
-        req.params.email +
-        ")"
+      `select 'Donation Amount','Donation Date' from CUSTOMER_DONATION where  EMAIL=(select EMAIL from LOGIN where SERIAL=(select max(SERIAL) from LOGIN )`
     )
     .then((result) => {
       res.send(result);
@@ -1380,12 +1296,50 @@ app.get("/customer_price/:email", (req, res) => {
     });
 });
 
+app.get("/c_feedback", (req, res) => {
+  connection
+    .get_data(
+      `select "Feedback Subject", "Feedback Time", RATING, "Feedback Body" from FEEDBACK_VIEW where "Customer Email" = (select EMAIL from LOGIN where SERIAL = (select max(SERIAL) from LOGIN))`
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+app.get("/customer_selfPrice", (req, res) => {
+  connection
+    .get_data(
+      `select TOTAL_PRICE from CUSTOMER_PRICING where CUSTOMER_ID = (select CUSTOMER_ID from CUSTOMER where EMAIL = (select EMAIL from LOGIN where SERIAL = (select max(SERIAL) from LOGIN)))`
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+//vet dashboard
+app.get("/vet_selfInfo", (req, res) => {
+  connection
+    .get_data(
+      "select * from vet_v where EMAIL = (select EMAIL from LOGIN where STATUS=1)"
+    )
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
 //staff dashboard
-
 app.get("staff_find_cabin/:ID", (req, res) => {
   connection
     .get_data(
-      `select * from staff_specialization_customer_animal_cabin where customer_id=(select email from login where serial= (select max(serial) from LOGIN))`
+      "select unique ('Customer Name'), 'Duration', 'Daycare Animal ID', CUSTOMER_ANIMAL_CABIN.cabin_no from CUSTOMER_ANIMAL_CABIN,DAYCARE_ANIMALwhere upper(type)=(select upper(SPECIALIZATION) from STAFF where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))) and CUSTOMER_ANIMAL_CABIN.customer_id=" +
+        req.params.ID
     )
     .then((result) => {
       res.send(result);

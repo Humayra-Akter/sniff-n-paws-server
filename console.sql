@@ -377,10 +377,11 @@ create table RESCUER_PHONE(
 );
 
 create or replace view rescuer_view as
-    select rescuer.rescuer_ID, name,  listagg(PHONE_NO, ', ') as Phone
+    select rescuer.rescuer_ID, name,  listagg(PHONE_NO, ', ') as Phone, 'r_'||listagg(R.rescued_animal_id, ', r_') as "Rescued Animals"
     from rescuer JOIN rescuer_PHONE on rescuer.rescuer_ID=rescuer_PHONE.rescuer_ID
+        join RESCUES R on RESCUER_PHONE.rescuer_id=R.rescuer_id join RESCUED_ANIMAL RA on R.rescued_animal_id=RA.rescued_animal_id
     group by rescuer.rescuer_ID, name
-    order by rescuer.rescuer_ID;
+order by rescuer.rescuer_ID;
 
 
 create table CABIN(
@@ -695,8 +696,7 @@ begin
             raise_application_error(-20001, 'Not enough space in cabin.');
 end;
 
-select unique ("Customer Name"), "Duration", "Daycare Animal ID", CUSTOMER_ANIMAL_CABIN.cabin_no from CUSTOMER_ANIMAL_CABIN,DAYCARE_ANIMAL
-        where upper(type)=(select upper(SPECIALIZATION) from STAFF where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))) and CUSTOMER_ANIMAL_CABIN.customer_id=5;
+-- select unique ("Customer Name"), "Duration", "Daycare Animal ID", CUSTOMER_ANIMAL_CABIN.cabin_no from CUSTOMER_ANIMAL_CABIN,DAYCARE_ANIMAL where upper(type)=(select upper(SPECIALIZATION) from STAFF where EMAIL=(select email from login where serial= (select max(serial) from LOGIN))) and CUSTOMER_ANIMAL_CABIN.customer_id=5;
 
 
 create table login(

@@ -37,22 +37,27 @@ order by RESCUED_ANIMAL_ID;
 
 
 --customer donation
-create or replace view customer_donation as
+create or replace view donation as
 select CUSTOMER.CUSTOMER_ID as "Customer ID", initcap(CUSTOMER.NAME) "Customer Name", CUSTOMER.EMAIL, CUSTOMER.ADDRESS.house || ', ' || CUSTOMER.ADDRESS.street || ', ' || CUSTOMER.ADDRESS.city as Address,
-       sum(AMOUNT) as "Donation Amount", listagg(to_char(DONATION_DATE, 'dd-mm-yyyy'), ', ') as "Donation Date"
+       AMOUNT, to_char(DONATION_DATE, 'dd-mm-yyyy') as "Donation Date"
 from CUSTOMER join DONATION on CUSTOMER.CUSTOMER_ID = DONATION.CUSTOMER_ID
-group by CUSTOMER.CUSTOMER_ID, CUSTOMER.NAME, CUSTOMER.EMAIL, CUSTOMER.ADDRESS.house || ', ' ||CUSTOMER.ADDRESS.street || ', ' ||CUSTOMER.ADDRESS.city
 order by CUSTOMER.CUSTOMER_ID;
 
 
 --non customer donation
 create or replace view non_customer_donation as
-select DONATION_NO, initcap(NAME) as Name, sum(AMOUNT) as "Donation Amount", listagg(to_char(DONATION_DATE, 'dd-mm-yyyy'), ', ') as "Donation Date"
+select DONATION_NO, initcap(NAME) as Name, AMOUNT, to_char(DONATION_DATE, 'dd-mm-yyyy') as "Donation Date"
 from DONATION
 where CUSTOMER_ID is NULL
-group by DONATION_NO, initcap(NAME)
 order by DONATION_NO;
 
+--CUSTOMER_DONATION
+create view CUSTOMER_DONATION as
+select CUSTOMER.CUSTOMER_ID as "Customer ID", initcap(CUSTOMER.NAME) "Customer Name", CUSTOMER.EMAIL, CUSTOMER.ADDRESS.house || ', ' || CUSTOMER.ADDRESS.street || ', ' || CUSTOMER.ADDRESS.city as Address,
+       sum(AMOUNT) as "Donation Amount", listagg(to_char(DONATION_DATE, 'dd-mm-yyyy'), ', ') as "Donation Date"
+from CUSTOMER join DONATION on CUSTOMER.CUSTOMER_ID = DONATION.CUSTOMER_ID
+group by CUSTOMER.CUSTOMER_ID, CUSTOMER.NAME, CUSTOMER.EMAIL, CUSTOMER.ADDRESS.house || ', ' ||CUSTOMER.ADDRESS.street || ', ' ||CUSTOMER.ADDRESS.city
+order by CUSTOMER.CUSTOMER_ID
 
 --feedbacks
 create or replace view feedback_view as
@@ -74,22 +79,12 @@ and rating <3.5;
 
 --healthy animal
 create or replace view healthy_daycare_animal as
-select DAYCARE_ANIMAL_ID,breed,type,to_char(COMING_DATE,'dd-mm-yyyy') AS "coming date",to_char(RELEASE_DATE,'dd-mm-yyyy') as "release date",CABIN_NO,CUSTOMER_ID
-from DAYCARE_ANIMAL
+select DAYCARE_ANIMAL_ID,breed,type,to_char(COMING_DATE,'dd-mm-yyyy') AS "Coming date",to_char(RELEASE_DATE,'dd-mm-yyyy') as "Release date",CABIN_NO,initcap(C2.NAME) as "Customer Name"
+from DAYCARE_ANIMAL join CUSTOMER C2 on DAYCARE_ANIMAL.CUSTOMER_ID = C2.CUSTOMER_ID
 where CABIN_NO in (
     select CABIN_NO from CABIN where upper(CABIN.TYPE)='HEALTHY'
     )
 order by DAYCARE_ANIMAL_ID;
-
-create or replace view healthy_rescued_animal as
-select *
-from RESCUED_ANIMAL
-where CABIN_NO in (
-    select CABIN_NO from CABIN where upper(CABIN.TYPE)='HEALTHY'
-    )
-order by RESCUED_ANIMAL_ID;
-
-select * from HEALTHY_DAYCARE_ANIMAL;
 
 
 --unvaccinated animals
@@ -298,7 +293,7 @@ order by RESCUED_ANIMAL_ID;
 
 select * from RESCUED_ANIMAL_RECORD_VIEW;
 --staff specialization customer animal
-SELECT * FROM STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
+-- SELECT * FROM STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
 
 CREATE OR REPLACE VIEW STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN AS
     SELECT
@@ -360,3 +355,5 @@ CREATE OR REPLACE VIEW CUSTOMER_PRICING AS
         ON C.CUSTOMER_ID = DA.CUSTOMER_ID
     GROUP BY
         C.CUSTOMER_ID,C.NAME,C.EMAIL;
+
+    

@@ -25,11 +25,13 @@ select * from CHECKUP_DAYCARE;
 select * from RESCUES;
 select * from daycare_animal_record_view;
 select * from rescued_animal_record_view;
-select * from LOGIN;
 select * from PENDING_ANIMAL;
+select * from LOGIN;
 
 update login set status=0 where  serial=(select max(serial) from login);
+select unique ('Customer Name'), 'Duration', 'Daycare Animal ID', CUSTOMER_ANIMAL_CABIN.cabin_no from CUSTOMER_ANIMAL_CABIN,DAYCARE_ANIMAL where upper(type)=(select upper(SPECIALIZATION) from STAFF where EMAIL=(select email from login where serial= (select max(serial) from LOGIN)));
 
+commit;
 
 --drop tables generation
 select 'drop table '||table_name||' cascade constraints;' from user_tables;
@@ -56,8 +58,8 @@ drop table DAYCARE_ANIMAL cascade constraints;
 drop table CHECKUP_RESCUE cascade constraints;
 drop table CHECKUP_DAYCARE cascade constraints;
 drop table RESCUES cascade constraints;
+drop table PENDING_ANIMAL;
 drop table login;
-
 
 
 --drop view
@@ -96,7 +98,16 @@ drop view TOTAL_DAYCARE_SERVICES;
 drop view CUSTOMER_PRICING;
 drop view VET_ANIMAL;
 drop view  DONATION_VIEW;
-
+drop view ALL_GEN_ADMIN_VIEW;
+drop view ALL_GEN_STAFF_VIEW;
+drop view ALL_GEN_VET_V;
+drop view CUST_RESCUER;
+drop view DAYCARE_ANIMAL_RECORD_VIEW;
+drop view HEALTH_RECORD_VIEW;
+drop view NEGATIVE_FEEDBACK;
+drop view POSITIVE_FEEDBACK;
+drop view RESCUED_ANIMAL_RECORD_VIEW;
+drop view STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
 
 
 --drop function and type
@@ -141,7 +152,9 @@ select * from TOTAL_DAYCARE_SERVICES;
 select * from CUSTOMER_PRICING;
 select * from VET_ANIMAL;
 select * from cust_rescuer;
+select * from CUSTOMER_DONATION;
 select * from staff_specialization_customer_animal_cabin;
+
 
 
 
