@@ -77,6 +77,8 @@ insert into RESCUED_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, RESCUED_FROM, IS_ADO
 values (5, 'Persian', 7, 300, 'Cat', 'Individual', NULL, NULL);
 insert into RESCUED_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, RESCUED_FROM, IS_ADOPTED, ADOPTION_DATE)
 values (5, 'Devon Rex', 7, 300, 'Cat', 'Individual', NULL, NULL);
+insert into RESCUED_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, RESCUED_FROM, IS_ADOPTED, ADOPTION_DATE)
+values (5, 'Wild cat', 7, 250, 'Cat', 'Sumitra', NULL, NULL);
 
 
 
@@ -94,6 +96,8 @@ insert into DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE
 values (5, 'Persian', 6, 400, 'Cat', to_date('21-09-2022', 'dd-mm-yyyy'), to_date('28-09-2022','dd-mm-yyyy'),5);
 insert into DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE_DATE,customer_id)
 values (5, 'Persian', 10, 800, 'dog', to_date('21-09-2022', 'dd-mm-yyyy'), to_date('28-09-2022','dd-mm-yyyy'),5);
+insert into DAYCARE_ANIMAL (AGE, BREED, WEIGHT, RATE, TYPE, COMING_DATE, RELEASE_DATE,customer_id)
+values (3, 'Somalian', 10, 800, 'cat', to_date('21-09-2021', 'dd-mm-yyyy'), to_date('28-09-2021','dd-mm-yyyy'),2);
 
 
 
@@ -110,6 +114,8 @@ insert into HEALTH_RECORD (RABIES, RABIES_DATE, FLU, FLU_DATE, SPAY_NEUTER, ANIM
 values ('YES', to_date('1-1-2011','dd-mm-yyyy'), 'YES',to_date('1-1-2009','dd-mm-yyyy'), 'NO', 'd_5');
 insert into HEALTH_RECORD (RABIES, RABIES_DATE, FLU, FLU_DATE, SPAY_NEUTER, ANIMAL_IDENTIFIER)
 values ('YES', to_date('1-1-2011','dd-mm-yyyy'), 'YES',to_date('1-1-2009','dd-mm-yyyy'), 'NO', 'd_6');
+insert into HEALTH_RECORD (RABIES, RABIES_DATE, FLU, FLU_DATE, SPAY_NEUTER, ANIMAL_IDENTIFIER)
+values ('YES', to_date('1-1-2014','dd-mm-yyyy'), 'YES',to_date('1-3-2011','dd-mm-yyyy'), 'NO', 'd_8');
 
 insert into HEALTH_RECORD (RABIES, RABIES_DATE, FLU, FLU_DATE, SPAY_NEUTER, ANIMAL_IDENTIFIER)
 values ('NO', NULL, 'YES', to_date('1-1-2002','dd-mm-yyyy'), 'NO', 'r_1');
@@ -140,16 +146,15 @@ values (11, 'High-Rise Syndrome');
 
 ---Admin
 Insert into ADMIN(NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, DESIGNATION,PASSWORD)
-values ('Mayesha','mayesha54@gmail.com','Female',ADDR('Dhaka','9/A, Satmasjid Road','26'),to_date('30/06/2002','dd-mm-yyyy'),20000,'Receptionist','mayesha123');
+values ('Mayesha','mayesha54@gmail.com','Female', ADDR('Dhaka','9/A, Satmasjid Road','26'),to_date('30/06/2002','dd-mm-yyyy'),20000,'Receptionist','mayesha#');
 Insert into ADMIN(NAME, EMAIL, GENDER, ADDRESS,DOB, SALARY, DESIGNATION,PASSWORD)
-values ('Abrar','abrar003@gmail.com','male',ADDR('Mirpur', 'DOHS Road', '128/3'),to_date('25/07/2002','dd-mm-yyyy'),50000,'Office Manager','abrar123');
+values ('Abrar','abrar003@gmail.com','male',ADDR('Mirpur', 'DOHS Road', '128/3'),to_date('25/07/2002','dd-mm-yyyy'),50000,'Office Manager','abrar#');
 Insert into ADMIN(NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, DESIGNATION,PASSWORD)
-values ('Humayra','humu26@gmail.com','Female',ADDR('Dhaka','Sonargaon Road','427'),to_date('05/10/2003','dd-mm-yyyy'),60000,'Chief of Staff','humayra123');
+values ('Humayra','humu26@gmail.com','Female',ADDR('Dhaka','Sonargaon Road','427'),to_date('05/10/2003','dd-mm-yyyy'),60000,'Chief of Staff','humayra#');
 Insert into ADMIN(NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, DESIGNATION,PASSWORD)
-values ('Imran','imran61@gmail.com','male',ADDR('Dhaka','Sultanggonj Road','38'),to_date('15/02/2003','dd-mm-yyyy'),40000,'Program Coordinator','imran123');
+values ('Imran','imran61@gmail.com','male',ADDR('Dhaka','Sultanggonj Road','38'),to_date('15/02/2003','dd-mm-yyyy'),40000,'Program Coordinator','imran#');
 Insert into ADMIN(ADMIN_ID,NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, DESIGNATION,PASSWORD)
-values (5,'Sadik','sadik64@gmail.com','male',ADDR('Dhaka','Mirpur 10 Road','59'),to_date('24/08/2002','dd-mm-yyyy'),40000,'Executive Assistant','sadik123');
-
+values (5,'Sadik','sadik64@gmail.com','male',ADDR('Dhaka','Mirpur 10 Road','59'),to_date('24/08/2002','dd-mm-yyyy'),40000,'Executive Assistant','sadik#');
 
 --admin_phone
 insert into ADMIN_PHONE (ADMIN_ID, PHONE_NO)
@@ -173,35 +178,35 @@ values ((select max(ADMIN_ID) from ADMIN), '01558075365');
 
 --staff
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('Liza','liza9@gmail.com','female',ADDR('Dhaka','miapara Road','19/2'),to_date('24/08/1998','dd-mm-yyyy'),10000,'cat','liza123');
+values ('Liza','liza9@gmail.com','female',ADDR('Dhaka','miapara Road','19/2'),to_date('24/08/1998','dd-mm-yyyy'),10000,'cat','liza#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('mikkie','miki71@hotmail.com','female',ADDR('Dhaka','baily Road','205'),to_date('14/08/1998','dd-mm-yyyy'),10000,'cat','mikkie123');
+values ('mikkie','miki71@hotmail.com','female',ADDR('Dhaka','baily Road','205'),to_date('14/08/1998','dd-mm-yyyy'),10000,'cat','mikkie#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('rakib','rakib74@yahoo.com','male',ADDR('Dhaka','60 ft Road','19'),to_date('12/12/1996','dd-mm-yyyy'),10000,'cat','rakib123');
+values ('rakib','rakib74@yahoo.com','male',ADDR('Dhaka','60 ft Road','19'),to_date('12/12/1996','dd-mm-yyyy'),10000,'cat','rakib#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
 values ('mini','mini9@gmail.com','female',ADDR('Dhaka','300 ft Road','20'),to_date('02/05/1998','dd-mm-yyyy'),10000,'cat','mini');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('esha','esha90@hotmail.com','female',ADDR('Dhaka','rokeya Road','8'),to_date('03/06/1998','dd-mm-yyyy'),10000,'cat','esha123');
+values ('esha','esha90@hotmail.com','female',ADDR('Dhaka','rokeya Road','8'),to_date('03/06/1998','dd-mm-yyyy'),10000,'cat','esha#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('esha','esha45@gmail.com','female',ADDR('Dhaka','miapara Road','74/5'),to_date('24/11/2000','dd-mm-yyyy'),15000,'dog','esha123');
+values ('esha','esha45@gmail.com','female',ADDR('Dhaka','miapara Road','74/5'),to_date('24/11/2000','dd-mm-yyyy'),15000,'dog','esha#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('mahin','mahin4@yahoo.com','male',ADDR('Dhaka','dohs Road','125/3'),to_date('12/12/1995','dd-mm-yyyy'),15000,'dog','mahin123');
+values ('mahin','mahin4@yahoo.com','male',ADDR('Dhaka','dohs Road','125/3'),to_date('12/12/1995','dd-mm-yyyy'),15000,'dog','mahin#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('farhan','farhan9@gmail.com','male',ADDR('Dhaka','mirpur 11 Road','19/2'),to_date('13/06/1995','dd-mm-yyyy'),15000,'dog','farhan123');
+values ('farhan','farhan9@gmail.com','male',ADDR('Dhaka','mirpur 11 Road','19/2'),to_date('13/06/1995','dd-mm-yyyy'),15000,'dog','farhan#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('maria','maru029@yahoo.com','female',ADDR('Dhaka','mirpur zoo Road','12'),to_date('14/05/1996','dd-mm-yyyy'),15000,'dog','maria123');
+values ('maria','maru029@yahoo.com','female',ADDR('Dhaka','mirpur zoo Road','12'),to_date('14/05/1996','dd-mm-yyyy'),15000,'dog','maria#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('maliha','liha49@hotmail.com','female',ADDR('Dhaka','paris Road','106'),to_date('15/04/1997','dd-mm-yyyy'),15000,'dog','maliha123');
+values ('maliha','liha49@hotmail.com','female',ADDR('Dhaka','paris Road','106'),to_date('15/04/1997','dd-mm-yyyy'),15000,'dog','maliha#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('sabbir','sabbir26@gmail.com','male',ADDR('Dhaka','ajimpur Road','74'),to_date('16/03/1998','dd-mm-yyyy'),18000,'rabbit','sabbir123');
+values ('sabbir','sabbir26@gmail.com','male',ADDR('Dhaka','ajimpur Road','74'),to_date('16/03/1998','dd-mm-yyyy'),18000,'rabbit','sabbir#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('sara','sara48@gmail.com','female',ADDR('Dhaka','mirpur Road','75'),to_date('17/02/1999','dd-mm-yyyy'),18000,'rabbit','sara123');
+values ('sara','sara48@gmail.com','female',ADDR('Dhaka','mirpur Road','75'),to_date('17/02/1999','dd-mm-yyyy'),18000,'rabbit','sara#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('alisha','alisha59@gmail.com','female',ADDR('Dhaka','salimullah Road','76'),to_date('18/01/1999','dd-mm-yyyy'),18000,'rabbit','alisha123');
+values ('alisha','alisha59@gmail.com','female',ADDR('Dhaka','salimullah Road','76'),to_date('18/01/1999','dd-mm-yyyy'),18000,'rabbit','alisha#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('nibir','nibir@gmail.com','male',ADDR('Dhaka','mirpur 12 Road','85'),to_date('19/08/2000','dd-mm-yyyy'),18000,'rabbit','nibir123');
+values ('nibir','nibir@gmail.com','male',ADDR('Dhaka','mirpur 12 Road','85'),to_date('19/08/2000','dd-mm-yyyy'),18000,'rabbit','nibir#');
 Insert into STAFF (NAME, EMAIL, GENDER, ADDRESS, DOB, SALARY, SPECIALIZATION,PASSWORD)
-values ('faysal','faysal@yahoo.com','male',ADDR('Dhaka','ajimpur Road','89'),to_date('20/07/2001','dd-mm-yyyy'),18000,'rabbit','faysal123');
+values ('faysal','faysal@yahoo.com','male',ADDR('Dhaka','ajimpur Road','89'),to_date('20/07/2001','dd-mm-yyyy'),18000,'rabbit','faysal#');
 
 
 --staff_phone
@@ -251,52 +256,52 @@ values (15,'01966170233');
 
 --customer
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('sarah','sarah@gmail.com','female',ADDR('Dhaka','mianus Road','105'),to_date('24/08/1992','dd-mm-yyyy'),'sarah123');
+values ('sarah','sarah@gmail.com','female',ADDR('Dhaka','mianus Road','105'),to_date('24/08/1992','dd-mm-yyyy'),'sarah#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('zarah','zarah68@gmail.com','female',ADDR('Dhaka','baily Road','102'),to_date('01/08/1986','dd-mm-yyyy'),'zarah123');
+values ('zarah','zarah68@gmail.com','female',ADDR('Dhaka','baily Road','102'),to_date('01/08/1986','dd-mm-yyyy'),'zarah#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('ayesha','ayesha06@gmail.com','female',ADDR('Dhaka','new market Road','103'),to_date('11/01/1983','dd-mm-yyyy'),'aysha123');
+values ('ayesha','ayesha06@gmail.com','female',ADDR('Dhaka','new market Road','103'),to_date('11/01/1983','dd-mm-yyyy'),'aysha#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('nasif','nasif52@gmail.com','male',ADDR('Dhaka','satmasjid Road','201'),to_date('12/02/1984','dd-mm-yyyy'),'nasif123');
+values ('nasif','nasif52@gmail.com','male',ADDR('Dhaka','satmasjid Road','201'),to_date('12/02/1984','dd-mm-yyyy'),'nasif#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('abrar','abrar005@gmail.com','male',ADDR('Dhaka','dmd 10/A Road','202'),to_date('24/03/1984','dd-mm-yyyy'),'abrar123');
+values ('abrar','abrar005@gmail.com','male',ADDR('Dhaka','dmd 10/A Road','202'),to_date('24/03/1984','dd-mm-yyyy'),'abrar#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('nahid','nahid26@gmail.com','male',ADDR('Dhaka','dmd 9/A Road','15'),to_date('24/04/1994','dd-mm-yyyy'),'nahid123');
+values ('nahid','nahid26@gmail.com','male',ADDR('Dhaka','dmd 9/A Road','15'),to_date('24/04/1994','dd-mm-yyyy'),'nahid#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('riku','riku56@gmail.com','male',ADDR('Dhaka','cant Road','125'),to_date('24/08/1986','dd-mm-yyyy'),'riku123');
+values ('riku','riku56@gmail.com','male',ADDR('Dhaka','cant Road','125'),to_date('24/08/1986','dd-mm-yyyy'),'riku#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('risha','risha1023@gmail.com','female',ADDR('Dhaka','Campus Road','159'),to_date('24/08/1989','dd-mm-yyyy'),'risha123');
+values ('risha','risha1023@gmail.com','female',ADDR('Dhaka','Campus Road','159'),to_date('24/08/1989','dd-mm-yyyy'),'risha#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('nabil','nabil171@gmail.com','male',ADDR('Dhaka','Mirpur 10 Road','160'),to_date('24/08/1991','dd-mm-yyyy'),'nabil123');
+values ('nabil','nabil171@gmail.com','male',ADDR('Dhaka','Mirpur 10 Road','160'),to_date('24/08/1991','dd-mm-yyyy'),'nabil#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('rimi','rimi456@gmail.com','female',ADDR('Dhaka','dmd 15 Road','161'),to_date('24/10/1990','dd-mm-yyyy'),'rimi123');
+values ('rimi','rimi456@gmail.com','female',ADDR('Dhaka','dmd 15 Road','161'),to_date('24/10/1990','dd-mm-yyyy'),'rimi#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('tamim','tamim14@gmail.com','male',ADDR('Dhaka','miabari Road','162'),to_date('24/08/1992','dd-mm-yyyy'),'tamim123');
+values ('tamim','tamim14@gmail.com','male',ADDR('Dhaka','miabari Road','162'),to_date('24/08/1992','dd-mm-yyyy'),'tamim#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('rahat','rahat45@gmail.com','male',ADDR('Dhaka','bazar Road','163'),to_date('24/08/1993','dd-mm-yyyy'),'rahat123');
+values ('rahat','rahat45@gmail.com','male',ADDR('Dhaka','bazar Road','163'),to_date('24/08/1993','dd-mm-yyyy'),'rahat#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('razu','sarh@gmail.com','male',ADDR('Dhaka','mirpur 14 Road','146'),to_date('24/08/1994','dd-mm-yyyy'),'razu123');
+values ('razu','sarh@gmail.com','male',ADDR('Dhaka','mirpur 14 Road','146'),to_date('24/08/1994','dd-mm-yyyy'),'razu#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('sarah','sarah1971@gmail.com','female',ADDR('Dhaka','mianus Road','190'),to_date('24/08/1995','dd-mm-yyyy'),'sarah123');
+values ('sarah','sarah1971@gmail.com','female',ADDR('Dhaka','mianus Road','190'),to_date('24/08/1995','dd-mm-yyyy'),'sarah#');
 insert into CUSTOMER (NAME, EMAIL, GENDER, ADDRESS, DOB,PASSWORD)
-values ('Jomilar Ma', 'sarahi@gmail.com','female',ADDR('Borishal','12','221'), to_date('24/08/1995','dd-mm-yyyy'),'jomilarma123');
+values ('Jomilar Ma', 'sarahi@gmail.com','female',ADDR('Borishal','12','221'), to_date('24/08/1995','dd-mm-yyyy'),'jomilarma#');
 
 
 --customer phone
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
-values (5, '01558095689');
+values (1, '01558095689');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
-values (5, '01768936523');
+values (1, '01768936523');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
-values (6, '01789652354');
+values (2, '01789652354');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
-values (6, '01789654123');
+values (2, '01789654123');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
-values (6, '01698745236');
+values (3, '01698745236');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
-values (7, '01776786523');
+values (4, '01776786523');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
-values (7, '01778936523');
+values (4, '01778936523');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
 values (5, '01778978923');
 insert into CUSTOMER_PHONE (CUSTOMER_ID, PHONE_NO)
@@ -325,15 +330,15 @@ values (14,'01759661892');
 
 --veterinarian
 insert into VETERINARIAN (NAME, EMAIL,  GENDER, ADDRESS, DOB, SALARY, QUALIFICATION,PASSWORD)
-values ('Dr. Asheem Kumar', 'asheem@gmail.com', 'male', ADDR('Dhaka', '34/a', '1123/2'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','kumar123');
+values ('Dr. Asheem Kumar', 'asheem@gmail.com', 'male', ADDR('Dhaka', '34/a', '1123/2'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','kumar#');
 insert into VETERINARIAN (NAME, EMAIL,  GENDER, ADDRESS, DOB, SALARY, QUALIFICATION,PASSWORD)
-values ('Dr. Layla Hasan', 'layla@gmail.com', 'female', ADDR('Dhaka', '14/a', '23/4'), to_date('1-1-1971', 'dd-mm-yyyy'), 50000, 'DMV','hasan123');
+values ('Dr. Layla Hasan', 'layla@gmail.com', 'female', ADDR('Dhaka', '14/a', '23/4'), to_date('1-1-1971', 'dd-mm-yyyy'), 50000, 'DMV','hasan#');
 insert into VETERINARIAN (NAME, EMAIL,  GENDER, ADDRESS, DOB, SALARY, QUALIFICATION,PASSWORD)
-values ('Dr. Amir Hossain', 'amir@gmail.com', 'male', ADDR('Dhaka', '34/a', '11/2'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','hossain123');
+values ('Dr. Amir Hossain', 'amir@gmail.com', 'male', ADDR('Dhaka', '34/a', '11/2'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','hossain#');
 insert into VETERINARIAN (NAME, EMAIL,  GENDER, ADDRESS, DOB, SALARY, QUALIFICATION,PASSWORD)
-values ('Dr. Ovinob Chowdhury', 'ovinob@gmail.com', 'male', ADDR('Dhaka', '34/a', '98'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','choedhury123');
+values ('Dr. Ovinob Chowdhury', 'ovinob@gmail.com', 'male', ADDR('Dhaka', '34/a', '98'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','choedhury#');
 insert into VETERINARIAN (NAME, EMAIL,  GENDER, ADDRESS, DOB, SALARY, QUALIFICATION,PASSWORD)
-values ('Dr. Aurora Tasnim', 'auroram@gmail.com', 'male', ADDR('Dhaka', '34/a', '1123/2'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','tasnim123');
+values ('Dr. Aurora Tasnim', 'auroram@gmail.com', 'male', ADDR('Dhaka', '34/a', '1123/2'), to_date('1-1-1971', 'dd-mm-yyyy'), 40000, 'DMV','tasnim#');
 
 --vet_phone
 insert into vet_PHONE (vet_id, PHONE_NO)
@@ -494,7 +499,7 @@ values (5,'01756201910');
 insert into rescuer_PHONE (rescuer_id, PHONE_NO)
 values (5,'01716130505');
 insert into rescuer_PHONE (rescuer_id, PHONE_NO)
-values (6,'01997894563');
+values (9,'01997894563');
 
 
 
@@ -516,10 +521,6 @@ values (1, 5, to_date('2-11-2021', 'dd-mm-yyyy'));
 Insert into shift values ('Day',to_date('09:00:00','hh24:mi:ss'),to_date('15:00:00','hh24:mi:ss'));
 Insert into shift values ('Night',to_date('18:00:00','hh24:mi:ss'),to_date('00:00:00','hh24:mi:ss'));
 
---shift_view
-create or replace view shift_view as
-    select shift.shift_name,to_char(start_time,'hh24:mi:ss') "start_time",to_char(end_time,'hh24:mi:ss') "end_time" from SHIFT
-order by shift.shift_name;
 
 --works at
 Insert into works_at values(1,'Day','Sunday');

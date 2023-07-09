@@ -26,18 +26,18 @@ order by A."Cabin Number";
 
 --animal vet history
 create or replace view daycare_animal_history as
-select daycare_animal_id as "Daycare Animal ID", VETERINARIAN.VET_ID as "Veterinarian ID", initcap(name) "Veterinarian Name", to_char(care_date, 'dd-mm-yyyy') as "Checkup Date"
-from VETERINARIAN join CHECKUP_DAYCARE on VETERINARIAN.VET_ID = CHECKUP_DAYCARE.VET_ID(+)
-order by DAYCARE_ANIMAL_ID;
+select DA.daycare_animal_id as "Daycare Animal ID", TYPE, VETERINARIAN.VET_ID as "Veterinarian ID", initcap(name) "Veterinarian Name", to_char(care_date, 'dd-mm-yyyy') as "Checkup Date"
+from VETERINARIAN join CHECKUP_DAYCARE on VETERINARIAN.VET_ID = CHECKUP_DAYCARE.VET_ID join DAYCARE_ANIMAL DA on CHECKUP_DAYCARE.DAYCARE_ANIMAL_ID = DA.DAYCARE_ANIMAL_ID
+order by Da.DAYCARE_ANIMAL_ID;
 
 create or replace view rescued_animal_history as
-select RESCUED_ANIMAL_ID as "Rescued Animal ID", V.VET_ID as "Veterinarian ID", initcap(name) "Veterinarian Name", to_char(care_date, 'dd-mm-yyyy') as "Checkup Date"
-from VETERINARIAN V join CHECKUP_RESCUE CR on V.VET_ID = CR.VET_ID(+)
-order by RESCUED_ANIMAL_ID;
+select RA.RESCUED_ANIMAL_ID as "Rescued Animal ID", type, V.VET_ID as "Veterinarian ID", initcap(name) "Veterinarian Name", to_char(care_date, 'dd-mm-yyyy') as "Checkup Date"
+from VETERINARIAN V join CHECKUP_RESCUE CR on V.VET_ID = CR.VET_ID join RESCUED_ANIMAL RA on CR.RESCUED_ANIMAL_ID = RA.RESCUED_ANIMAL_ID
+order by RA.RESCUED_ANIMAL_ID;
 
 
 --customer donation
-create or replace view donation as
+create or replace view customer_donation as
 select CUSTOMER.CUSTOMER_ID as "Customer ID", initcap(CUSTOMER.NAME) "Customer Name", CUSTOMER.EMAIL, CUSTOMER.ADDRESS.house || ', ' || CUSTOMER.ADDRESS.street || ', ' || CUSTOMER.ADDRESS.city as Address,
        AMOUNT, to_char(DONATION_DATE, 'dd-mm-yyyy') as "Donation Date"
 from CUSTOMER join DONATION on CUSTOMER.CUSTOMER_ID = DONATION.CUSTOMER_ID
@@ -51,13 +51,6 @@ from DONATION
 where CUSTOMER_ID is NULL
 order by DONATION_NO;
 
---CUSTOMER_DONATION
-create view CUSTOMER_DONATION as
-select CUSTOMER.CUSTOMER_ID as "Customer ID", initcap(CUSTOMER.NAME) "Customer Name", CUSTOMER.EMAIL, CUSTOMER.ADDRESS.house || ', ' || CUSTOMER.ADDRESS.street || ', ' || CUSTOMER.ADDRESS.city as Address,
-       sum(AMOUNT) as "Donation Amount", listagg(to_char(DONATION_DATE, 'dd-mm-yyyy'), ', ') as "Donation Date"
-from CUSTOMER join DONATION on CUSTOMER.CUSTOMER_ID = DONATION.CUSTOMER_ID
-group by CUSTOMER.CUSTOMER_ID, CUSTOMER.NAME, CUSTOMER.EMAIL, CUSTOMER.ADDRESS.house || ', ' ||CUSTOMER.ADDRESS.street || ', ' ||CUSTOMER.ADDRESS.city
-order by CUSTOMER.CUSTOMER_ID
 
 --feedbacks
 create or replace view feedback_view as
@@ -85,6 +78,16 @@ where CABIN_NO in (
     select CABIN_NO from CABIN where upper(CABIN.TYPE)='HEALTHY'
     )
 order by DAYCARE_ANIMAL_ID;
+
+create or replace view healthy_rescued_animal as
+select RESCUES.RESCUED_ANIMAL_ID, AGE, BREED, WEIGHT,TYPE, RESCUED_FROM, IS_ADOPTED, ADOPTION_DATE, HEALTH_RECORD_ID, CABIN_NO, R.NAME as "Rescuer Name", RESCUE_DATE
+from RESCUED_ANIMAL join RESCUES on RESCUED_ANIMAL.RESCUED_ANIMAL_ID=RESCUES.RESCUED_ANIMAL_ID join RESCUER R on RESCUES.RESCUER_ID = R.RESCUER_ID
+where CABIN_NO in (
+    select CABIN_NO from CABIN where upper(CABIN.TYPE)='HEALTHY'
+    )
+order by RESCUES.RESCUED_ANIMAL_ID;
+
+select * from HEALTHY_DAYCARE_ANIMAL;
 
 
 --unvaccinated animals
@@ -197,12 +200,10 @@ GROUP BY c.customer_id, c.name
 order by c.customer_id;
 
 --customer price
-
-create or replace view CUSTOMER_Pricing  as
-SELECT c.customer_id, c.name, SUM((da.release_date - da.coming_date) * da.rate) AS total_price
-FROM customer c
-JOIN daycare_animal da ON c.customer_id = da.customer_id
-GROUP BY c.customer_id, c.name;
+CREATE OR REPLACE VIEW CUSTOMER_PRICING AS
+    SELECT C.CUSTOMER_ID, C.NAME, C.EMAIL, SUM((DA.RELEASE_DATE - DA.COMING_DATE) * DA.RATE) AS TOTAL_PRICE
+    FROM CUSTOMER C JOIN DAYCARE_ANIMAL DA ON C.CUSTOMER_ID = DA.CUSTOMER_ID
+    GROUP BY C.CUSTOMER_ID,C.NAME,C.EMAIL;
 
 --vet-Animal
 create or replace view vet_animal  as
@@ -224,11 +225,10 @@ LEFT JOIN daycare_animals d ON r.vet_id = d.vet_id;
 
 
 --customer as well as Rescuer
-create or replace view CUST_RESCUER as
-SELECT c.customer_id, cph.phone_no, r.rescuer_id
-FROM customer c,customer_phone  cph
-, rescuer_phone  rph,
- rescuer r where cph.phone_no = rph.phone_no and c.name=r.name;
+create or replace view cust_rescuer as
+SELECT c.customer_id, r.rescuer_id, cph.PHONE_NO, r.NAME
+FROM customer c,customer_phone  cph, rescuer_phone  rph, rescuer r
+where cph.phone_no = rph.phone_no and c.name=r.name;
 
 create or replace view donation_view as
     select DONATION_NO, name, amount, to_char(donation_date, 'dd-mm-yyyy') as "Date", customer_id
@@ -255,7 +255,6 @@ from temp_record_table t join DISEASES D on t.HEALTH_RECORD_ID=D.HEALTH_RECORD_I
 group by DAYCARE_ANIMAL_ID, AGE, BREED, WEIGHT, TYPE, RABIES, RABIES_DATE, flu, FLU_DATE, SPAY_NEUTER
 order by DAYCARE_ANIMAL_ID;
 
-select * from DAYCARE_ANIMAL_RECORD_VIEW;
 
 --rescued animal health
 create or replace view rescued_animal_record_view as
@@ -270,93 +269,29 @@ from temp_record_table t join DISEASES D on t.HEALTH_RECORD_ID=D.HEALTH_RECORD_I
 group by RESCUED_ANIMAL_ID, AGE, BREED, WEIGHT, TYPE, RABIES, RABIES_DATE, flu, FLU_DATE, SPAY_NEUTER
 order by RESCUED_ANIMAL_ID;
 
---daycare animal health
-create or replace view daycare_animal_record_view as
-    with temp_record_table as (
-        select DA.DAYCARE_ANIMAL_ID, DA.AGE, DA.BREED, DA.WEIGHT, DA.TYPE, HR.RABIES, HR.RABIES_DATE, HR.FLU, HR.FLU_DATE, HR.SPAY_NEUTER, HEALTH_RECORD_ID
-        from DAYCARE_ANIMAL DA join HEALTH_RECORD HR on DA.HEALTH_RECORD_ID = HR.RECORD_ID
-        group by DA.DAYCARE_ANIMAL_ID, DA.AGE, DA.BREED, DA.WEIGHT, DA.TYPE, HR.RABIES, HR.RABIES_DATE, HR.FLU, HR.FLU_DATE, HR.SPAY_NEUTER, HEALTH_RECORD_ID
-        order by DAYCARE_ANIMAL_ID
-    )
-select DAYCARE_ANIMAL_ID, AGE, BREED, WEIGHT, TYPE, RABIES, to_char(RABIES_DATE,'dd-mm-yyyy') as "Rabies Date", flu, to_char(FLU_DATE,'dd-mm-yyyy')  as "Flu Date", SPAY_NEUTER, listagg(DISEASE_NAME, ', ') as "Diseases"
-from temp_record_table t join DISEASES D on t.HEALTH_RECORD_ID=D.HEALTH_RECORD_ID(+)
-group by DAYCARE_ANIMAL_ID, AGE, BREED, WEIGHT, TYPE, RABIES, RABIES_DATE, flu, FLU_DATE, SPAY_NEUTER
-order by DAYCARE_ANIMAL_ID;
 
-select * from DAYCARE_ANIMAL_RECORD_VIEW;
-
---rescued animal health
-create or replace view rescued_animal_record_view as
-    with temp_record_table as (
-        select RA.RESCUED_ANIMAL_ID, RA.AGE, RA.BREED, RA.WEIGHT, RA.TYPE, HR.RABIES, HR.RABIES_DATE, HR.FLU, HR.FLU_DATE, HR.SPAY_NEUTER, HEALTH_RECORD_ID
-        from RESCUED_ANIMAL RA join HEALTH_RECORD HR on RA.HEALTH_RECORD_ID = HR.RECORD_ID
-        group by RA.RESCUED_ANIMAL_ID, RA.AGE, RA.BREED, RA.WEIGHT, RA.TYPE, HR.RABIES, HR.RABIES_DATE, HR.FLU, HR.FLU_DATE, HR.SPAY_NEUTER, HEALTH_RECORD_ID
-        order by RESCUED_ANIMAL_ID
-    )
-select RESCUED_ANIMAL_ID, AGE, BREED, WEIGHT, TYPE, RABIES, RABIES_DATE, flu, FLU_DATE, SPAY_NEUTER, listagg(DISEASE_NAME, ', ') as "Diseases"
-from temp_record_table t join DISEASES D on t.HEALTH_RECORD_ID=D.HEALTH_RECORD_ID(+)
-group by RESCUED_ANIMAL_ID, AGE, BREED, WEIGHT, TYPE, RABIES, RABIES_DATE, flu, FLU_DATE, SPAY_NEUTER
-order by RESCUED_ANIMAL_ID;
-
-select * from RESCUED_ANIMAL_RECORD_VIEW;
---staff specialization customer animal
-SELECT * FROM STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
-
-create or replace view staff_specialization_customer_animal_cabin as
-    select CAC.CUSTOMER_ID, CAC."Customer Name", CAC."Duration", CAC."Daycare Animal ID", CAC.CABIN_NO, C.EXISTING_QUANTITY, C.CAPACITY, C.TYPE
-from CUSTOMER_ANIMAL_CABIN CAC join CABIN C on CAC.CABIN_NO=C.CABIN_NO
-WHERE upper(C.ANIMAL_TYPE)=(
-    select upper(SPECIALIZATION) from staff where EMAIL=(
-        select email from LOGIN where SERIAL=(
-                select max(SERIAL) from LOGIN
-            )
-        )
-);
----all_gen_admin_view
+---all general admin view
 create or replace view all_gen_admin_view as
-    select  name, email, gender, 
+    select  name, email, gender,
           designation ,listagg(PHONE_NO, ', ') as Phone
     from ADMIN JOIN ADMIN_PHONE on ADMIN.ADMIN_ID=ADMIN_PHONE.ADMIN_ID
     group by ADMIN.ADMIN_ID, name, email, gender, ADMIN.address.house || ', ' || ADMIN.address.street || ', ' || ADMIN.address.city, to_char(dob, 'dd-mm-yyyy'), floor(months_between(sysdate, dob)/12), designation
 order by ADMIN.admin_id;
 
-select * from ALL_GEN_ADMIN_VIEW;
 
----all_gen_staff_view
 create or replace view all_gen_staff_view as
-    select  name, email, gender, 
+    select  name, email, gender,
            listagg(PHONE_NO, ', ') as Phone
     from staff JOIN staff_PHONE on STAFF.STAFF_ID=STAFF_PHONE.STAFF_ID
     group by staff.staff_ID, name, email, gender, staff.address.house || ', ' || staff.address.street || ', ' || staff.address.city, to_char(dob, 'dd-mm-yyyy'), floor(months_between(sysdate, dob)/12), salary
 order by staff.staff_id;
 
 
----all_gen_vet_v
 create or replace view all_gen_vet_v as
     select  name, email, gender, qualification, listagg(PHONE_NO, ', ') as Phone
     from VETERINARIAN V JOIN vet_PHONE on V.vet_ID=vet_PHONE.vet_ID
     group by V.vet_ID, name, email, gender, V.address.house || ', ' || V.address.street || ', ' || V.address.city, to_char(dob, 'dd-mm-yyyy'), floor(months_between(sysdate, dob)/12), salary, qualification
 order by V.vet_id;
-
----customer pricing
-CREATE OR REPLACE VIEW CUSTOMER_PRICING AS
-    SELECT
-        C.CUSTOMER_ID,
-        C.NAME,
-        C.EMAIL,
-        SUM((DA.RELEASE_DATE - DA.COMING_DATE) * DA.RATE) AS TOTAL_PRICE
-    FROM
-        CUSTOMER       C
-        JOIN DAYCARE_ANIMAL DA
-        ON C.CUSTOMER_ID = DA.CUSTOMER_ID
-    GROUP BY
-        C.CUSTOMER_ID,C.NAME,C.EMAIL;
-
-create or replace view staff_specialization as
-select specialization "animal_type",staff_id, initcap(name) as "Name"
-from staff
-order by specialization;
-    
 
 create or replace view daycare_view as
 select DAYCARE_ANIMAL_ID, AGE, BREED, WEIGHT, RATE, TYPE, to_char(COMING_DATE, 'dd-mm-yyyy') "Coming Date", to_char(RELEASE_DATE,'dd-mm-yyyy') "Release Date", CABIN_NO, HEALTH_RECORD_ID, NAME, EMAIL

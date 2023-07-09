@@ -1,5 +1,18 @@
 --select tables generation
 select 'select * from '||table_NAME||';' from USER_TABLES;
+select * from LOGIN order by SERIAL;
+select * from WORKS_AT;
+select * from RESCUER;
+select * from RESCUER_PHONE;
+select * from CABIN order by CABIN_NO;
+select * from HEALTH_RECORD;
+select * from DISEASES;
+select * from RESCUED_ANIMAL;
+select * from DAYCARE_ANIMAL;
+select * from CHECKUP_RESCUE;
+select * from CHECKUP_DAYCARE;
+select * from RESCUES;
+select * from PENDING_ANIMAL;
 select * from ADMIN;
 select * from ADMIN_PHONE;
 select * from STAFF;
@@ -12,26 +25,11 @@ select * from DONATION_PHONE;
 select * from VETERINARIAN;
 select * from VET_PHONE;
 select * from SHIFT;
-select * from WORKS_AT;
-select * from RESCUER;
-select * from RESCUER_PHONE;
-select * from CABIN;
-select * from HEALTH_RECORD;
-select * from DISEASES;
-select * from RESCUED_ANIMAL;
-select * from DAYCARE_ANIMAL;
-select * from CHECKUP_RESCUE;
-select * from CHECKUP_DAYCARE;
-select * from RESCUES;
-select * from daycare_animal_record_view;
-select * from rescued_animal_record_view;
-select * from PENDING_ANIMAL;
-select * from LOGIN;
-
-update login set status=0 where  serial=(select max(serial) from login);
 
 
-commit;
+update login set status=0 where  serial=41;
+
+select STATUS from LOGIN where serial=(select max(serial) from login);
 
 --drop tables generation
 select 'drop table '||table_name||' cascade constraints;' from user_tables;
@@ -58,13 +56,12 @@ drop table DAYCARE_ANIMAL cascade constraints;
 drop table CHECKUP_RESCUE cascade constraints;
 drop table CHECKUP_DAYCARE cascade constraints;
 drop table RESCUES cascade constraints;
-drop table PENDING_ANIMAL;
 drop table login;
+
 
 
 --drop view
 select 'drop view '||VIEW_NAME||';' from USER_VIEWS;
-drop view RESCUER_VIEW;
 drop view ADMIN_VIEW;
 drop view CUSTOMER_VIEW;
 drop view VET_VIEW;
@@ -97,17 +94,8 @@ drop view RESCUE_INFO;
 drop view TOTAL_DAYCARE_SERVICES;
 drop view CUSTOMER_PRICING;
 drop view VET_ANIMAL;
-drop view  DONATION_VIEW;
-drop view ALL_GEN_ADMIN_VIEW;
-drop view ALL_GEN_STAFF_VIEW;
-drop view ALL_GEN_VET_V;
-drop view CUST_RESCUER;
-drop view DAYCARE_ANIMAL_RECORD_VIEW;
-drop view HEALTH_RECORD_VIEW;
-drop view NEGATIVE_FEEDBACK;
-drop view POSITIVE_FEEDBACK;
-drop view RESCUED_ANIMAL_RECORD_VIEW;
-drop view STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
+drop view DONATION_VIEW;
+
 
 
 --drop function and type
@@ -117,42 +105,50 @@ drop type ADDR;
 drop SEQUENCE feedback_serial;
 
 
-select 'select * from '||VIEW_NAME||';' from USER_VIEWS;
 
-select * from CUSTOMER_VIEW;
 --all views generation
-select * from DOCTOR_SHIFT;
+select 'select * from '||VIEW_NAME||';' from USER_VIEWS;
 select * from ADMIN_VIEW;
-select * from SHIFT_VIEW;
-select * from VET_VIEW;
-select * from DAYCARE_ANIMAL_HISTORY;   ---baki
 select * from STAFF_VIEW;
-select * from CUSTOMER_ANIMAL_CABIN;
-select * from CABIN_INFO; 
+select * from CUSTOMER_VIEW;
+select * from DOCTOR_SHIFT;
+select * from VET_VIEW;
+select * from CABIN_INFO;
+select * from DAYCARE_ANIMAL_HISTORY;
+select * from RESCUED_ANIMAL_HISTORY;
+select * from CUSTOMER_DONATION;
 select * from NON_CUSTOMER_DONATION;
-select * from RESCUED_ANIMAL_HISTORY;    ---baki
-select * from HEALTHY_DAYCARE_ANIMAL;
-select * from CUSTOMER_DONATION;
-select * from UNVACCINATED_DAYCARE_ANIMAL;
 select * from FEEDBACK_VIEW;
-select * from ISOLATED_DAYCARE_ANIMAL;
+select * from HEALTHY_DAYCARE_ANIMAL;
 select * from HEALTHY_RESCUED_ANIMAL;
-select * from RESCUER_ANIMAL_CABIN;
+select * from UNVACCINATED_DAYCARE_ANIMAL;
 select * from UNVACCINATED_RESCUED_ANIMAL;
-select * from STAFF_REVIEW;
+select * from ISOLATED_DAYCARE_ANIMAL;
 select * from ISOLATED_RESCUED_ANIMAL;
-select * from VETERINARIAN_REVIEW;
+select * from RESCUER_ANIMAL_CABIN;
+select * from CUSTOMER_ANIMAL_CABIN;
+select * from STAFF_SPECIALIZATION;
+select * from STAFF_REVIEW;
 select * from ADMIN_REVIEW;
-select * from RESCUE_INFO;
+select * from MANAGER_REVIEW;
 select * from SERVICE_REVIEW;
-select * from CUSTOMER_PRICING;
+select * from VETERINARIAN_REVIEW;
 select * from AVERAGE_RATING;
-select * from cust_rescuer;
+select * from RESCUE_INFO;
 select * from TOTAL_DAYCARE_SERVICES;
+select * from CUSTOMER_PRICING;
 select * from VET_ANIMAL;
-select * from staff_specialization_customer_animal_cabin;
-select * from CUSTOMER_DONATION;
-
+select * from SHIFT_VIEW;
+select * from DONATION_VIEW;
+select * from VET_V;
+select * from POSITIVE_FEEDBACK;
+select * from NEGATIVE_FEEDBACK;
+select * from DAYCARE_ANIMAL_RECORD_VIEW;
+select * from RESCUED_ANIMAL_RECORD_VIEW;
+select * from CUST_RESCUER;
+select * from ALL_GEN_ADMIN_VIEW;
+select * from ALL_GEN_VET_V;
+select * from ALL_GEN_STAFF_VIEW;
 
 
 commit ;
