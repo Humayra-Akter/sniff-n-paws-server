@@ -29,7 +29,7 @@ select * from PENDING_ANIMAL;
 select * from LOGIN;
 
 update login set status=0 where  serial=(select max(serial) from login);
-select unique ('Customer Name'), 'Duration', 'Daycare Animal ID', CUSTOMER_ANIMAL_CABIN.cabin_no from CUSTOMER_ANIMAL_CABIN,DAYCARE_ANIMAL where upper(type)=(select upper(SPECIALIZATION) from STAFF where EMAIL=(select email from login where serial= (select max(serial) from LOGIN)));
+
 
 commit;
 
@@ -117,44 +117,41 @@ drop type ADDR;
 drop SEQUENCE feedback_serial;
 
 
-
---all views generation
 select 'select * from '||VIEW_NAME||';' from USER_VIEWS;
-select * from ADMIN_VIEW;
-select * from CUSTOMER_VIEW;
-select * from VET_VIEW;
-select * from DOCTOR_SHIFT;
-select * from STAFF_VIEW;
-select * from SHIFT_VIEW;
-select * from CABIN_INFO; 
-select * from DAYCARE_ANIMAL_HISTORY;   ---baki
-select * from RESCUED_ANIMAL_HISTORY;    ---baki
-select * from CUSTOMER_ANIMAL_CABIN;
-select * from CUSTOMER_DONATION;
-select * from NON_CUSTOMER_DONATION;
-select * from FEEDBACK_VIEW;
-select * from HEALTHY_DAYCARE_ANIMAL;
-select * from HEALTHY_RESCUED_ANIMAL;
-select * from UNVACCINATED_DAYCARE_ANIMAL;
-select * from UNVACCINATED_RESCUED_ANIMAL;
-select * from ISOLATED_DAYCARE_ANIMAL;
-select * from ISOLATED_RESCUED_ANIMAL;
-select * from RESCUER_ANIMAL_CABIN;
-select * from STAFF_SPECIALIZATION;
-select * from STAFF_REVIEW;
-select * from ADMIN_REVIEW;
-select * from MANAGER_REVIEW;
-select * from SERVICE_REVIEW;
-select * from VETERINARIAN_REVIEW;
-select * from AVERAGE_RATING;
-select * from RESCUE_INFO;
-select * from TOTAL_DAYCARE_SERVICES;
-select * from CUSTOMER_PRICING;
-select * from VET_ANIMAL;
-select * from cust_rescuer;
-select * from CUSTOMER_DONATION;
-select * from staff_specialization_customer_animal_cabin;
 
+select * from CUSTOMER_VIEW;
+--all views generation
+select * from DOCTOR_SHIFT;
+select * from ADMIN_VIEW;
+select * from SHIFT_VIEW;
+select * from VET_VIEW;
+select * from DAYCARE_ANIMAL_HISTORY;   ---baki
+select * from STAFF_VIEW;
+select * from CUSTOMER_ANIMAL_CABIN;
+select * from CABIN_INFO; 
+select * from NON_CUSTOMER_DONATION;
+select * from RESCUED_ANIMAL_HISTORY;    ---baki
+select * from HEALTHY_DAYCARE_ANIMAL;
+select * from CUSTOMER_DONATION;
+select * from UNVACCINATED_DAYCARE_ANIMAL;
+select * from FEEDBACK_VIEW;
+select * from ISOLATED_DAYCARE_ANIMAL;
+select * from HEALTHY_RESCUED_ANIMAL;
+select * from RESCUER_ANIMAL_CABIN;
+select * from UNVACCINATED_RESCUED_ANIMAL;
+select * from STAFF_REVIEW;
+select * from ISOLATED_RESCUED_ANIMAL;
+select * from VETERINARIAN_REVIEW;
+select * from ADMIN_REVIEW;
+select * from RESCUE_INFO;
+select * from SERVICE_REVIEW;
+select * from CUSTOMER_PRICING;
+select * from AVERAGE_RATING;
+select * from cust_rescuer;
+select * from TOTAL_DAYCARE_SERVICES;
+select * from VET_ANIMAL;
+select * from staff_specialization_customer_animal_cabin;
+select * from CUSTOMER_DONATION;
 
 
 

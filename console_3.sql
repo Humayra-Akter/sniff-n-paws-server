@@ -152,11 +152,18 @@ group by vet_id,name
 order by vet_id;
 
 --staff specialization
-create or replace view staff_specialization as
-select specialization "animal_type",listagg('ID '||staff_id||'->Name: '||name, ', ') as specialized_staff
-from staff
-group by specialization
-order by specialization;
+CREATE OR REPLACE VIEW STAFF_SPECIALIZATION AS
+    SELECT
+        SPECIALIZATION "animal_type",
+        LISTAGG('ID '||STAFF_ID||'->Name: '||NAME,
+        ', ')          AS SPECIALIZED_STAFF
+    FROM
+        STAFF
+    GROUP BY
+        SPECIALIZATION
+    ORDER BY
+        SPECIALIZATION;
+
 
 --feedback categorization
 create or replace view staff_review as
@@ -293,31 +300,18 @@ order by RESCUED_ANIMAL_ID;
 
 select * from RESCUED_ANIMAL_RECORD_VIEW;
 --staff specialization customer animal
--- SELECT * FROM STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
+SELECT * FROM STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN;
 
-CREATE OR REPLACE VIEW STAFF_SPECIALIZATION_CUSTOMER_ANIMAL_CABIN AS
-    SELECT
-        CAC.CUSTOMER_ID,
-        CAC."Customer Name",
-        CAC."Duration",
-        CAC."Daycare Animal ID",
-        CAC.CABIN_NO,
-        C.EXISTING_QUANTITY,
-        C.CAPACITY,
-        C.TYPE
-    FROM
-        CUSTOMER_ANIMAL_CABIN CAC
-        JOIN CABIN C
-        ON CAC.CABIN_NO=C.CABIN_NO
-    WHERE
-        UPPER(C.ANIMAL_TYPE)=(
-            SELECT
-                UPPER(SPECIALIZATION)
-            FROM
-                STAFF
-            WHERE
-                EMAIL=(select email from login where serial=(select max(serial) from login))
-        );
+create or replace view staff_specialization_customer_animal_cabin as
+    select CAC.CUSTOMER_ID, CAC."Customer Name", CAC."Duration", CAC."Daycare Animal ID", CAC.CABIN_NO, C.EXISTING_QUANTITY, C.CAPACITY, C.TYPE
+from CUSTOMER_ANIMAL_CABIN CAC join CABIN C on CAC.CABIN_NO=C.CABIN_NO
+WHERE upper(C.ANIMAL_TYPE)=(
+    select upper(SPECIALIZATION) from staff where EMAIL=(
+        select email from LOGIN where SERIAL=(
+                select max(SERIAL) from LOGIN
+            )
+        )
+);
 ---all_gen_admin_view
 create or replace view all_gen_admin_view as
     select  name, email, gender, 
@@ -325,6 +319,8 @@ create or replace view all_gen_admin_view as
     from ADMIN JOIN ADMIN_PHONE on ADMIN.ADMIN_ID=ADMIN_PHONE.ADMIN_ID
     group by ADMIN.ADMIN_ID, name, email, gender, ADMIN.address.house || ', ' || ADMIN.address.street || ', ' || ADMIN.address.city, to_char(dob, 'dd-mm-yyyy'), floor(months_between(sysdate, dob)/12), designation
 order by ADMIN.admin_id;
+
+select * from ALL_GEN_ADMIN_VIEW;
 
 ---all_gen_staff_view
 create or replace view all_gen_staff_view as
@@ -356,4 +352,12 @@ CREATE OR REPLACE VIEW CUSTOMER_PRICING AS
     GROUP BY
         C.CUSTOMER_ID,C.NAME,C.EMAIL;
 
+create or replace view staff_specialization as
+select specialization "animal_type",staff_id, initcap(name) as "Name"
+from staff
+order by specialization;
     
+
+create or replace view daycare_view as
+select DAYCARE_ANIMAL_ID, AGE, BREED, WEIGHT, RATE, TYPE, to_char(COMING_DATE, 'dd-mm-yyyy') "Coming Date", to_char(RELEASE_DATE,'dd-mm-yyyy') "Release Date", CABIN_NO, HEALTH_RECORD_ID, NAME, EMAIL
+from DAYCARE_ANIMAL natural join CUSTOMER;
